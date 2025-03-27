@@ -96,7 +96,7 @@ BDDInterval(BDD upper, BDD lower) :
         if (isInterrupted()) return *this;
 	if (IsPrecise())
 	{
-	    BDDInterval{upper.UnivAbstract(variables)};
+	    return BDDInterval{upper.UnivAbstract(variables)};
 	}
 
 	return BDDInterval{upper.UnivAbstract(variables), lower.UnivAbstract(variables)};
@@ -107,7 +107,7 @@ BDDInterval(BDD upper, BDD lower) :
         if (isInterrupted()) return *this;
 	if (IsPrecise())
 	{
-	    BDDInterval{upper.ExistAbstract(variables)};
+	    return BDDInterval{upper.ExistAbstract(variables)};
 	}
 
 	return BDDInterval{upper.ExistAbstract(variables), lower.ExistAbstract(variables)};
