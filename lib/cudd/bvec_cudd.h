@@ -62,7 +62,7 @@ public:
     bvec_false(Cudd& manager, size_t bitnum);
 
     static Bvec
-    bvec_con(Cudd& manager, size_t bitnum, int val);
+    bvec_con(Cudd& manager, size_t bitnum, unsigned int val);
 
     static Bvec
     bvec_var(Cudd& manager, size_t bitnum, int offset, int step);

@@ -79,7 +79,7 @@ namespace cudd {
     }
 
     Bvec
-    Bvec::bvec_con(Cudd& manager, size_t bitnum, int val) {
+    Bvec::bvec_con(Cudd& manager, size_t bitnum, unsigned int val) {
         Bvec res = reserve(manager, bitnum);
         if (val < 0) {
             throw std::logic_error("use bvec_ncon for negative values");
