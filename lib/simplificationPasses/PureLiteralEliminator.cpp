@@ -87,7 +87,7 @@ z3::expr PureLiteralEliminator::Apply(z3::expr &e)
 
     z3::expr_vector polaritySubstitutesSrc(*context);
     z3::expr_vector polaritySubstitutesDst(*context);
-    for (const auto [var, polarity] : variablePolarities)
+    for (const auto &[var, polarity] : variablePolarities)
     {
 	if (polarity == NEGATIVE || polarity == POSITIVE)
 	{
