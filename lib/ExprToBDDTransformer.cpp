@@ -1,7 +1,6 @@
 #include "ExprToBDDTransformer.h"
 #include <cmath>
 #include <iostream>
-#include <sstream>
 #include <list>
 #include <algorithm>
 
