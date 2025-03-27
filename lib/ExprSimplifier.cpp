@@ -1,6 +1,5 @@
 #include <string>
 #include <sstream>
-#include <numeric>
 #include <iostream>
 
 #include "ExprSimplifier.h"
