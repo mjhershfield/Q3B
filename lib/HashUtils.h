@@ -12,7 +12,7 @@ struct std::hash<z3::expr>
 template <>
 struct std::equal_to<z3::expr>
 {
-    constexpr bool operator()(const z3::expr& lhs, const z3::expr& rhs) const
+    bool operator()(const z3::expr& lhs, const z3::expr& rhs) const
     {
 	return lhs.id() == rhs.id();
     }
