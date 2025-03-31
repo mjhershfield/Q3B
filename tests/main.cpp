@@ -205,6 +205,7 @@ TEST_CASE( "Without approximations", "[noapprox]" )
     REQUIRE( SolveWithoutApprox("../tests/data/smtcomp23/heapsort.i_8.smt2") == UNSAT );
     REQUIRE( SolveWithoutApprox("../tests/data/smtcomp23/heapsort.i_9.smt2") == UNSAT );
     REQUIRE( SolveWithoutApprox("../tests/data/smtcomp23/minimal.smt2") == UNSAT );
+    REQUIRE( SolveWithoutApprox("../tests/data/btor2c-eagerMod.bakery.1.prop1-func-interl.c_0.smt2") == SAT );
 }
 
 TEST_CASE( "With variable approximations", "[variableapprox]" )
@@ -229,6 +230,7 @@ TEST_CASE( "With bothLimit approximations", "[bothlimitapprox]" )
     REQUIRE( SolveWithBothLimitApprox("../tests/data/sum02_true-unreach-call_true-no-overflow.i_375.smt2", OVERAPPROXIMATION) == SAT );
     REQUIRE( SolveWithBothLimitApprox("../tests/data/check_bvsgt_bvudiv1_8bit.smt2", UNDERAPPROXIMATION) != SAT );
     REQUIRE( SolveWithBothLimitApprox("../tests/data/bvurem_approx.smt2", UNDERAPPROXIMATION, 1) != SAT );
+    REQUIRE( SolveWithBothLimitApprox("../tests/data/RND_3_14.smt2") == UNSAT );
 }
 
 TEST_CASE( "With bothLimit approximations -- term introducer ", "[bothlimitapprox-ti]" )
