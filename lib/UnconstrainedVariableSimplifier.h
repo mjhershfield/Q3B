@@ -81,11 +81,6 @@ public:
 
     void SimplifyIte();
 
-    void SetCountVariablesLocally(bool countVariablesLocally)
-    {
-	this->countVariablesLocally = countVariablesLocally;
-    }
-
     void SetDagCounting(bool dagCounting)
     {
 	this->dagCounting = dagCounting;
@@ -139,7 +134,6 @@ private:
     int getNumberOfLeadingZeroes(const z3::expr&);
     int lastBound = 0;
 
-    bool countVariablesLocally = false;
     bool dagCounting = false;
     bool goalUnconstrained = false;
     int cacheHits = 0;

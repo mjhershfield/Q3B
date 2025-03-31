@@ -72,8 +72,6 @@ expr ExprSimplifier::Simplify(expr expression)
 	    expression = expression.simplify();
 
 	    auto unconstrainedSimplifier = std::make_unique<UnconstrainedVariableSimplifier>(*context, expression);
-
-	    unconstrainedSimplifier->SetCountVariablesLocally(true);
 	    unconstrainedSimplifier->SetDagCounting(false);
             unconstrainedSimplifier->SetGoalUnconstrained(goalUnconstrained);
 	    // TODO: Refactor (martin)
