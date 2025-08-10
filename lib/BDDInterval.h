@@ -15,96 +15,106 @@ public:
     BDD lower;
 
     BDDInterval() = default;
-    BDDInterval(const BDDInterval &) = default;
-    BDDInterval &operator=(const BDDInterval &) = default;
+    BDDInterval(const BDDInterval&) = default;
+    BDDInterval& operator = (const BDDInterval&) = default;
 
-    BDDInterval(BDD bdd) : upper(bdd), lower(bdd) {}
+BDDInterval(BDD bdd) :
+    upper(bdd), lower(bdd)
+    { }
 
-    BDDInterval(BDD upper, BDD lower) : upper(upper), lower(lower) {}
+BDDInterval(BDD upper, BDD lower) :
+    upper(upper), lower(lower)
+    { }
 
-    BDDInterval operator&(const BDDInterval &rhs)
+    BDDInterval operator & (const BDDInterval& rhs)
     {
-        if (isInterrupted())
-            return *this;
-        if (IsPrecise() && rhs.IsPrecise()) {
-            return BDDInterval{upper & rhs.upper};
-        }
+        if (isInterrupted()) return *this;
+	if (IsPrecise() && rhs.IsPrecise())
+	{
+	    return BDDInterval{upper & rhs.upper};
+	}
 
-        return BDDInterval{upper & rhs.upper, lower & rhs.lower};
+	return BDDInterval{upper & rhs.upper, lower & rhs.lower};
     }
 
-    BDDInterval operator*(const BDDInterval &rhs) { return *this & rhs; }
-
-    BDDInterval operator|(const BDDInterval &rhs)
+    BDDInterval operator * (const BDDInterval& rhs)
     {
-        if (isInterrupted())
-            return *this;
-        if (IsPrecise() && rhs.IsPrecise()) {
-            return BDDInterval{upper | rhs.upper};
-        }
-
-        return BDDInterval{upper | rhs.upper, lower | rhs.lower};
+	return *this & rhs;
     }
 
-    BDDInterval operator+(const BDDInterval &rhs) { return *this | rhs; }
-
-    BDDInterval operator!()
+    BDDInterval operator | (const BDDInterval& rhs)
     {
-        if (isInterrupted())
-            return *this;
-        if (IsPrecise()) {
-            return BDDInterval{!upper};
-        }
+        if (isInterrupted()) return *this;
+	if (IsPrecise() && rhs.IsPrecise())
+	{
+	    return BDDInterval{upper | rhs.upper};
+	}
 
-        return BDDInterval{!upper, !lower};
+	return BDDInterval{upper | rhs.upper, lower | rhs.lower};
     }
 
-    BDDInterval Xnor(const BDDInterval &rhs) const
+    BDDInterval operator + (const BDDInterval& rhs)
     {
-        if (isInterrupted())
-            return *this;
-        if (IsPrecise() && rhs.IsPrecise()) {
-            return BDDInterval{upper.Xnor(rhs.upper)};
-        }
-
-        return BDDInterval{upper.Xnor(rhs.upper), lower.Xnor(rhs.lower)};
+	return *this | rhs;
     }
 
-    BDDInterval Ite(const BDDInterval &t, const BDDInterval &e) const
+    BDDInterval operator ! ()
     {
-        if (isInterrupted())
-            return *this;
-        if (IsPrecise() && t.IsPrecise() && e.IsPrecise()) {
-            return BDDInterval{upper.Ite(t.upper, e.upper)};
-        }
+        if (isInterrupted()) return *this;
+	if (IsPrecise())
+	{
+	    return BDDInterval{!upper};
+	}
 
-        return BDDInterval{upper.Ite(t.upper, e.upper),
-                           lower.Ite(t.lower, e.lower)};
+	return BDDInterval{!upper, !lower};
     }
 
-    BDDInterval UnivAbstract(const BDD &variables)
+    BDDInterval Xnor (const BDDInterval& rhs) const
     {
-        if (isInterrupted())
-            return *this;
-        if (IsPrecise()) {
-            return BDDInterval{upper.UnivAbstract(variables)};
-        }
+        if (isInterrupted()) return *this;
+	if (IsPrecise() && rhs.IsPrecise())
+	{
+	    return BDDInterval{upper.Xnor(rhs.upper)};
+	}
 
-        return BDDInterval{upper.UnivAbstract(variables),
-                           lower.UnivAbstract(variables)};
+	return BDDInterval{upper.Xnor(rhs.upper), lower.Xnor(rhs.lower)};
     }
 
-    BDDInterval ExistAbstract(const BDD &variables)
+    BDDInterval Ite (const BDDInterval& t, const BDDInterval& e) const
     {
-        if (isInterrupted())
-            return *this;
-        if (IsPrecise()) {
-            return BDDInterval{upper.ExistAbstract(variables)};
-        }
+        if (isInterrupted()) return *this;
+	if (IsPrecise() && t.IsPrecise() && e.IsPrecise())
+	{
+	    return BDDInterval{upper.Ite(t.upper, e.upper)};
+	}
 
-        return BDDInterval{upper.ExistAbstract(variables),
-                           lower.ExistAbstract(variables)};
+	return BDDInterval{upper.Ite(t.upper, e.upper), lower.Ite(t.lower, e.lower)};
     }
 
-    bool IsPrecise() const { return upper == lower; }
+    BDDInterval UnivAbstract(const BDD& variables)
+    {
+        if (isInterrupted()) return *this;
+	if (IsPrecise())
+	{
+	    return BDDInterval{upper.UnivAbstract(variables)};
+	}
+
+	return BDDInterval{upper.UnivAbstract(variables), lower.UnivAbstract(variables)};
+    }
+
+    BDDInterval ExistAbstract(const BDD& variables)
+    {
+        if (isInterrupted()) return *this;
+	if (IsPrecise())
+	{
+	    return BDDInterval{upper.ExistAbstract(variables)};
+	}
+
+	return BDDInterval{upper.ExistAbstract(variables), lower.ExistAbstract(variables)};
+    }
+
+    bool IsPrecise() const
+    {
+	return upper == lower;
+    }
 };
