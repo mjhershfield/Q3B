@@ -1,9 +1,8 @@
 #pragma once
 
+#include <cstdio>
 #include "cudd.h"
 #include <cuddObj.hh>
-
-using namespace cudd;
 
 class BDDInterval
 {
