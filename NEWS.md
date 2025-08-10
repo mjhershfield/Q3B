@@ -1,6 +1,6 @@
 # News
 
-## 1.1 (dev)
+## 1.1
 
 – Fix unsoundness issues caused by variable polarities.
 – Fix abstractions for Boolean =.
