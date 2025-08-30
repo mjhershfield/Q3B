@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 project(q3b)
+include(FetchContent)
 
 SET(CMAKE_CXX_STANDARD 17)
 
@@ -21,28 +22,42 @@ file(GLOB Q3B_SRC
     "lib/simplificationPasses/*.cpp"
     )
 
-SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+# SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 SET(BUILD_SHARED_LIBRARIES OFF)
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
 
-set(Z3_DIR "contrib/z3/build" CACHE STRING "Path in which Z3 has been built")
-set(CUDD_DIR "contrib/cudd" CACHE STRING "Path in which CUDD has been built")
-set(ANTLR_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/contrib/antlr/antlr-4.11.1-complete.jar" CACHE STRING "Path to ANTLR executable")
-
-find_package(Z3 CONFIG)
-set(LIBS ${LIBS} ${Z3_LIBRARIES})
-include_directories(${Z3_CXX_INCLUDE_DIRS})
-
-find_library(LibCUDD cudd
-  HINTS ${CUDD_DIR}/cudd/.libs
-  DOC "CUDD library"
-  REQUIRED
+# Download prebuilt version of z3 4.11.2
+FetchContent_Declare(
+    z3
+    URL https://github.com/Z3Prover/z3/releases/download/z3-4.11.2/z3-4.11.2-x64-glibc-2.31.zip
 )
-set(LIBS ${LIBS} ${LibCUDD})
-include_directories(${CUDD_DIR}/cudd ${CUDD_DIR}/cplusplus)
+
+# Download ANTLR 4.11.1 jarfile
+set(ANTLR_JARFILE "antlr-4.11.1-complete.jar")
+FetchContent_Declare(
+    antlr_jar
+    URL "https://www.antlr.org/download/${ANTLR_JARFILE}"
+    DOWNLOAD_NO_EXTRACT TRUE
+)
+
+FetchContent_MakeAvailable(antlr_jar z3)
+
+set(LIBS ${LIBS} z3)
+include_directories(${z3_SOURCE_DIR}/include)
+link_directories(${z3_SOURCE_DIR}/bin)
+
+set(ANTLR_EXECUTABLE "${antlr_jar_SOURCE_DIR}/${ANTLR_JARFILE}" CACHE STRING "Path to ANTLR executable")
+
+# Add CUDD from git subdirectory
+# set(CUDD_BUILD_SHARED_LIBS ON)
+set(CUDD_BUILD_CPP_API ON)
+add_subdirectory(extern/cudd)
+
+# include_directories(${CUDD_DIR} ${CUDD_DIR}/cudd ${CUDD_DIR}/cplusplus ${CUDD_DIR}/epd ${CUDD_DIR}/mtr ${CUDD_DIR}/st)
+# include(${CUDD_PUBLIC_HEADERS})
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
@@ -71,9 +86,12 @@ antlr_target(SmtLibParser parser/smtlibv2-grammar/src/main/resources/SMTLIBv2.g4
 include_directories(SYSTEM ${ANTLR_SmtLibParser_OUTPUT_DIR})
 
 add_library(q3blib ${Q3B_SRC} ${ANTLR_SmtLibParser_CXX_OUTPUTS})
+add_dependencies(q3blib cudd)
 target_link_libraries(q3blib ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(q3blib cudd)
+target_link_libraries(q3blib z3)
+target_link_libraries(q3blib antlr4_static)
 
-target_link_libraries(q3blib ${LIBS} antlr4_static)
 add_executable(q3b app/main.cpp)
 target_link_libraries(q3b q3blib)
 

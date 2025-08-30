@@ -1,3 +1,7 @@
 [submodule "parser/smtlibv2-grammar"]
 	path = parser/smtlibv2-grammar
 	url = https://github.com/martinjonas/smtlibv2-grammar.git
+[submodule "extern/cudd"]
+	path = extern/cudd
+	url = ../../mjhershfield/cudd
+	branch = develop
