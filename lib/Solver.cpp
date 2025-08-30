@@ -7,6 +7,8 @@
 #include <functional>
 #include <sstream>
 
+#include "cuddInt.h"
+
 std::mutex Solver::m;
 std::mutex Solver::m_res;
 std::mutex Solver::m_z3context;
@@ -58,6 +60,8 @@ Result Solver::getResult(z3::expr expr, Approximation approximation, int effecti
     }
 
     BDD returned = transformer.Proccess();
+    int mc = returned.CountMinterm(returned.manager()->size);
+    std::cout << "Model count=" << mc << " numvars=" << returned.manager()->size << "\n";
     if (!returned.IsZero() && config.produceModels)
     {
         threadModel = transformer.GetModel(returned);
