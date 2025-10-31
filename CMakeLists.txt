@@ -54,6 +54,7 @@ set(ANTLR_EXECUTABLE "${antlr_jar_SOURCE_DIR}/${ANTLR_JARFILE}" CACHE STRING "Pa
 # Add CUDD from git subdirectory
 # set(CUDD_BUILD_SHARED_LIBS ON)
 set(CUDD_BUILD_CPP_API ON)
+set(CUDD_BUILD_DDDMP ON)
 add_subdirectory(extern/cudd)
 
 # include_directories(${CUDD_DIR} ${CUDD_DIR}/cudd ${CUDD_DIR}/cplusplus ${CUDD_DIR}/epd ${CUDD_DIR}/mtr ${CUDD_DIR}/st)
@@ -89,6 +90,7 @@ add_library(q3blib ${Q3B_SRC} ${ANTLR_SmtLibParser_CXX_OUTPUTS})
 add_dependencies(q3blib cudd)
 target_link_libraries(q3blib ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(q3blib cudd)
+target_link_libraries(q3blib dddmp)
 target_link_libraries(q3blib z3)
 target_link_libraries(q3blib antlr4_static)
 

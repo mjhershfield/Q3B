@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 enum ApproximationMethod { NONE, VARIABLES, OPERATIONS, BOTH };
 enum ReorderType { NO_REORDER, WIN2, WIN2_ITE, WIN3, WIN3_ITE, SIFT, SIFT_ITE };
 enum Approximations { NO_APPROXIMATIONS, ONLY_UNDERAPPROXIMATIONS, ONLY_OVERAPPROXIMATIONS, ALL_APPROXIMATIONS};
@@ -25,4 +27,7 @@ struct Config
 
     bool produceModels = false;
     bool validatingSolver = false;
+
+    bool dumpBdd = false;
+    std::string dumpBddPath;
 };

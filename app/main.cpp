@@ -39,6 +39,7 @@ void print_usage()
     std::cout << "  --bdd:reorder               BDD reorder type (none|win2|win2ite|win3|win3ite|sift|siftite) [sift]" << std::endl;
     std::cout << "  --simpl:flip-universal      negate universal formulas [0]" << std::endl;
     std::cout << "  --verbosity                 set level of debugging outputs [0]" << std::endl;
+	std::cout << "  --dump                      specify file to dump BDD to, eg. dump.dddmp" << std::endl;
 }
 
 
@@ -47,16 +48,17 @@ int main(int argc, char* argv[])
     static struct option long_options[] = {
 	{"abstractions", required_argument, 0, 'a' },
 	{"abstract:method", required_argument, 0, 'm' },
-        {"abstract:check-models", required_argument, 0, 'c' },
+	{"abstract:check-models", required_argument, 0, 'c' },
 	{"abstract:necessary-bits", required_argument, 0, 'b' },
-        {"simpl:unconstrained", required_argument, 0, 'p' },
-        {"simpl:add-congruences", required_argument, 0, 'C' },
-        {"uc:goal", required_argument, 0, 'g' },
+	{"simpl:unconstrained", required_argument, 0, 'p' },
+	{"simpl:add-congruences", required_argument, 0, 'C' },
+	{"uc:goal", required_argument, 0, 'g' },
 	{"bdd:reorder", required_argument, 0, 'r' },
 	{"simpl:flip-universal", required_argument, 0, 'f' },
 	{"verbosity", required_argument, 0, 'v' },
-        {"version", no_argument, 0, 'V' },
-        {"help", no_argument, 0, 'h' },
+	{"dump", required_argument, 0, 'd'},
+	{"version", no_argument, 0, 'V' },
+	{"help", no_argument, 0, 'h' },
 	{0,           0,                 0,  0   }
     };
 
@@ -65,7 +67,7 @@ int main(int argc, char* argv[])
 
     int opt = 0;
     int long_index = 0;
-    while ((opt = getopt_long(argc, argv,"a:m:b:p:g:r:i:c:C:f:v:hV", long_options, &long_index )) != -1) {
+    while ((opt = getopt_long(argc, argv,"a:m:b:p:g:r:i:c:C:f:v:d:hV", long_options, &long_index )) != -1) {
 	switch (opt) {
 	case 'a':
         {
@@ -134,6 +136,18 @@ int main(int argc, char* argv[])
 	{
 	    Logger::SetVerbosity(atoi(optarg));
 	    break;
+	}
+	case 'd':
+	{
+		string optionString(optarg);
+		if (optionString.size() == 0)
+		{
+			std::cout << "dump file path was empty";
+			exit(1);
+		}
+		config.dumpBdd = true;
+		config.dumpBddPath = optionString;
+		break;
 	}
 	case 'V':
 	{

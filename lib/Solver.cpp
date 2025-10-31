@@ -6,8 +6,11 @@
 #include <thread>
 #include <functional>
 #include <sstream>
+#include <iomanip>
+#include <iostream>
 
 #include "cuddInt.h"
+#include "dddmp.h"
 
 std::mutex Solver::m;
 std::mutex Solver::m_res;
@@ -60,8 +63,13 @@ Result Solver::getResult(z3::expr expr, Approximation approximation, int effecti
     }
 
     BDD returned = transformer.Proccess();
-    int mc = returned.CountMinterm(returned.manager()->size);
-    std::cout << "Model count=" << mc << " numvars=" << returned.manager()->size << "\n";
+    if (config.dumpBdd)
+    {
+        std::cout << "DUMPING BDD" << std::endl;
+        Dddmp_cuddBddStore(returned.manager(), NULL, returned.getNode(), NULL, NULL, 0, DDDMP_VARDEFAULT, const_cast<char*>(config.dumpBddPath.c_str()), NULL);
+    }
+    double mc = returned.CountMinterm(returned.manager()->size);
+    std::cout << "Model count=" << std::setw(15) << mc << " numvars=" << returned.manager()->size << "\n";
     if (!returned.IsZero() && config.produceModels)
     {
         threadModel = transformer.GetModel(returned);
