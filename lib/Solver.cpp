@@ -63,13 +63,24 @@ Result Solver::getResult(z3::expr expr, Approximation approximation, int effecti
     }
 
     BDD returned = transformer.Proccess();
+    transformer.PrintVariableInfo();
     if (config.dumpBdd)
     {
         std::cout << "DUMPING BDD" << std::endl;
-        Dddmp_cuddBddStore(returned.manager(), NULL, returned.getNode(), NULL, NULL, 0, DDDMP_VARDEFAULT, const_cast<char*>(config.dumpBddPath.c_str()), NULL);
+        std::vector<std::string> varNames = transformer.GetVariableNames();
+        std::vector<char*> varNamesCString;
+        varNamesCString.reserve(varNames.size());
+        for (const auto& name : varNames)
+        {
+            varNamesCString.push_back(const_cast<char*>(name.c_str()));
+        }
+        varNamesCString.push_back(NULL);
+        Dddmp_cuddBddStore(returned.manager(), "DUMPFILE", returned.getNode(), varNamesCString.data(), NULL, DDDMP_MODE_TEXT, Dddmp_VarInfoType::DDDMP_VARDEFAULT, const_cast<char*>(config.dumpBddPath.c_str()), NULL);
     }
+
     double mc = returned.CountMinterm(returned.manager()->size);
-    std::cout << "Model count=" << std::setw(15) << mc << " numvars=" << returned.manager()->size << "\n";
+    std::cout << "Model count=" << std::setw(15) << mc << " numvars=" << returned.GetNumVariables() << " numvarsopt=" << returned.GetNumSupportingVariables() << std::endl;
+
     if (!returned.IsZero() && config.produceModels)
     {
         threadModel = transformer.GetModel(returned);

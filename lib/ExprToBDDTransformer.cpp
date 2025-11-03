@@ -7,6 +7,8 @@
 #include "HexHelper.h"
 #include "Solver.h"
 
+#include "cuddInt.h"
+
 const unsigned int precisionMultiplier = 1000;
 
 using namespace std;
@@ -1210,6 +1212,95 @@ void ExprToBDDTransformer::PrintNecessaryVarValues(BDD bdd, const std::string& v
         bddExprCache.clear();
         bvecExprCache.clear();
     }
+}
+
+void ExprToBDDTransformer::PrintVariableInfo()
+{
+	// Print
+	// std::map<std::string, Bvec> vars;
+    // std::map<std::string, BDD> varSets;
+    // std::map<std::string, std::vector<int>> varIndices;
+    // std::map<std::string, z3::sort> varSorts;
+	// std::set<var> constSet;
+    // std::set<var> boundVarSet;
+
+	std::cout << "vars:" << std::endl;
+	for (const auto& elem : vars)
+	{
+		std::cout << "    " << elem.first << " = " << std::endl;
+	}
+
+	std::cout << "varSets:" << std::endl;
+	for (const auto& elem : varSets)
+	{
+		std::cout << "    " << elem.first << " = " << elem.second << std::endl;
+	}
+
+	std::cout << "varIndices:" << std::endl;
+	for (const auto& elem : varIndices)
+	{
+		std::cout << "    " << elem.first << " = [";
+		for (const auto& i : elem.second) {
+			std::cout << i << ", ";
+		}
+		std::cout << "]" << std::endl;
+	}
+
+	std::cout << "varSorts:" << std::endl;
+	for (const auto& elem : varSorts)
+	{
+		std::cout << "    " << elem.first << " = " << elem.second << std::endl;
+	}
+
+	std::cout << "constSet:" << std::endl;
+	for (const auto& elem : constSet)
+	{
+		std::cout << "    " << elem.first << " = " << elem.second << std::endl;
+	}
+
+	std::cout << "boundVarSet:" << std::endl;
+	for (const auto& elem : boundVarSet)
+	{
+		std::cout << "    " << elem.first << " = " << elem.second << std::endl;
+	}
+}
+
+std::vector<std::string> ExprToBDDTransformer::GetVariableNames()
+{
+	std::vector<std::string> varNames;
+	size_t numVars = 0;
+
+	// Determine number of variables in the BDD by adding together the sizes of every bit vector
+	for (const auto& var : constSet)
+	{
+		numVars += var.second;
+	}
+
+	std::cout << "num_vars = " << numVars << std::endl;
+
+	varNames.resize(numVars);
+
+	// Assign each bit of each variable to be names '<variable_name>_<bit_num>'
+	for (const auto& var : varIndices)
+	{
+		const std::string& varName = var.first;
+		for (size_t bit_index = 0; bit_index < var.second.size(); bit_index++)
+		{
+			int var_index = var.second[bit_index];
+			varNames[var_index] = varName;
+			varNames[var_index] += "_";
+			varNames[var_index] += std::to_string(bit_index);
+		}
+	}
+
+	std::cout << "Final var names: [";
+	for (const auto& name : varNames)
+	{
+		std::cout << name << ", ";
+	}
+	std::cout << "]" << std::endl;
+
+	return varNames;
 }
 
 void ExprToBDDTransformer::PrintNecessaryValues(BDD bdd)

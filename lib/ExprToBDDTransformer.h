@@ -217,6 +217,9 @@ class ExprToBDDTransformer
 
     void PrintNecessaryValues(BDD);
     void PrintNecessaryVarValues(BDD, const std::string&);
+
+    void PrintVariableInfo();
+    std::vector<std::string> GetVariableNames();
 };
 
 #endif
