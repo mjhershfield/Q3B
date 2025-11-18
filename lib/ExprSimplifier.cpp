@@ -10,6 +10,7 @@
 
 
 #define DEBUG false
+#define SKIP_OPTIMIZATIONS true
 
 using namespace z3;
 
@@ -22,6 +23,12 @@ expr ExprSimplifier::Simplify(expr expression)
     }
 
     expression = expression.simplify();
+
+    if (SKIP_OPTIMIZATIONS)
+    {
+        return expression;
+    }
+    
     expression = CanonizeBoundVariables(expression);
     expression = StripToplevelExistentials(expression);
 

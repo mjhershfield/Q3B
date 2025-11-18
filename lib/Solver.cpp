@@ -63,7 +63,7 @@ Result Solver::getResult(z3::expr expr, Approximation approximation, int effecti
     }
 
     BDD returned = transformer.Proccess();
-    transformer.PrintVariableInfo();
+    // transformer.PrintVariableInfo();
     if (config.dumpBdd)
     {
         std::cout << "DUMPING BDD" << std::endl;
