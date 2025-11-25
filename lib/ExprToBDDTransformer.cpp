@@ -1267,18 +1267,7 @@ void ExprToBDDTransformer::PrintVariableInfo()
 
 std::vector<std::string> ExprToBDDTransformer::GetVariableNames()
 {
-	std::vector<std::string> varNames;
-	size_t numVars = 0;
-
-	// Determine number of variables in the BDD by adding together the sizes of every bit vector
-	for (const auto& var : constSet)
-	{
-		numVars += var.second;
-	}
-
-	std::cout << "num_vars = " << numVars << std::endl;
-
-	varNames.resize(numVars);
+	std::map<size_t, std::string> var_names_map;
 
 	// Assign each bit of each variable to be names '<variable_name>_<bit_num>'
 	for (const auto& var : varIndices)
@@ -1287,20 +1276,39 @@ std::vector<std::string> ExprToBDDTransformer::GetVariableNames()
 		for (size_t bit_index = 0; bit_index < var.second.size(); bit_index++)
 		{
 			int var_index = var.second[bit_index];
-			varNames[var_index] = varName;
-			varNames[var_index] += "_";
-			varNames[var_index] += std::to_string(bit_index);
+			// std::cout << "trying to access var_index = " << var_index << " for variable " << var.first << std::endl;
+			var_names_map[var_index] = varName;
+			var_names_map[var_index] += "_";
+			var_names_map[var_index] += std::to_string(bit_index);
 		}
 	}
 
-	std::cout << "Final var names: [";
-	for (const auto& name : varNames)
+	std::vector<std::string> var_names_vector;
+	size_t largest_varnum = var_names_map.rbegin()->first;
+	// std::cout << "Largest index: " << largest_varnum << std::endl;
+	var_names_vector.reserve(largest_varnum + 1);
+	size_t unnamed_bit_num = 0;
+	for (size_t i = 0; i <= largest_varnum; i++)
 	{
-		std::cout << name << ", ";
+		if (var_names_map.count(i))
+		{
+			var_names_vector.push_back(var_names_map.at(i));
+		}
+		else
+		{
+			var_names_vector.push_back("__unnamed" + std::to_string(unnamed_bit_num));
+			unnamed_bit_num += 1;
+		}
 	}
-	std::cout << "]" << std::endl;
 
-	return varNames;
+	// std::cout << "Final var names: [";
+	// for (const auto& name : var_names_vector)
+	// {
+	// 	std::cout << name << ", ";
+	// }
+	// std::cout << "]" << std::endl;
+
+	return var_names_vector;
 }
 
 void ExprToBDDTransformer::PrintNecessaryValues(BDD bdd)
